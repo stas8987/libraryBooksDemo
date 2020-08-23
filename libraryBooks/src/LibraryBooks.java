@@ -38,9 +38,12 @@ public class LibraryBooks {
                             break;
 
                         case  51:  //3
-                            // processingMethodThreeCommand ();
+                            flag &= ~ (1 << 4); //сбросить флаг
+                            do {
+                                System.out.println("Rename book name");
+                                processingMethodThreeCommand ();
+                            }while((flag & (1 << 4)) == 0); //
                             break;
-
                         case  52:  //4
                             flag &= ~ (1 << 5); //сбросить флаг
                             do {
@@ -263,6 +266,129 @@ public class LibraryBooks {
         }
 
     }
+
+    private  static void processingMethodThreeCommand () {
+
+        if ((flag & (1 << 4)) == 0) {
+            if (sortingIndexOne[0] == 0){
+                System.out.println("there are no books in the database");
+                System.out.println("or number (0) to enter the menu");
+                //запросить входные данные
+                readConsole();
+                //проверить входные данные на наличие инородных примесей.
+                checkCharOrNumber(); //если вернет flag 0 то число, если вернет flag 1 то символы
+                //проверить входные данные на наличие командного числа
+                if ((flag & (1 << 1)) == 0) {
+                    //проверить количество цифр в масиве если больше одной то это неверная команда
+                    if (readDataConsole.length == 2) {
+                        if (readDataConsole[0] == 48){
+                            flag |= (1 << 4);  //установить флаг выхода из обработчика первой команды
+                        }
+                    }
+                }
+            }else{
+                for (int sIO = 1; sIO <= sortingIndexOne[0];sIO++) {
+                    if (sIO == 1) {
+                        System.out.write(sIO + 48);
+                        System.out.write(46);
+                        System.out.write(32);
+                        for (int readName = 1; readName < sortingIndexOne[sIO]; readName++) {
+                            System.out.write(baseOne[readName]);
+                        }
+
+                    } else {
+                        System.out.write(sIO + 48);
+                        System.out.write(46);
+                        System.out.write(32);
+                        for (int readName = sortingIndexOne[sIO - 1]; readName < sortingIndexOne[sIO]; readName++) {
+                            System.out.write(baseOne[readName]);
+                        }
+                    }
+                }
+                System.out.println("in the database of ("+ sortingIndexOne[0] + ") books");
+                System.out.println("or number (0) to enter the menu");
+                //запросить входные данные
+                readConsole();
+                //проверить входные данные на наличие инородных примесей.
+                checkCharOrNumber(); //если вернет flag 0 то число, если вернет flag 1 то символы
+                //проверить входные данные на наличие командного числа
+                if ((flag & (1 << 1)) == 0) {
+                    if ((2 <= readDataConsole.length) & (readDataConsole.length <= 11)) {
+                        if ((readDataConsole[0] == 48) & (readDataConsole.length == 2)){
+                            flag |= (1 << 4);  //установить флаг выхода из обработчика первой команды
+                        }else {
+                            int inputDataIndex = 0;
+                            int mulIndex = 0;
+                            for (int index = readDataConsole.length-2; index>=0; index--){
+                                if ((mulIndex = mulIndex * 10) == 0){
+                                    mulIndex = 1;
+                                }
+                                inputDataIndex = inputDataIndex + ((readDataConsole[index]-48)*mulIndex);
+                            }
+                            //проверяем есть ли такой номер книги
+                            if (sortingIndexOne[0] >= inputDataIndex){
+                                // создаем резервный массив
+                                int [] baseTemp = new int[baseOne.length];
+                                //затем копируем в этот массив все данные до
+                                // полученного числа -1
+                                System.arraycopy(baseOne, 0, baseTemp, 0, sortingIndexOne[inputDataIndex-1]);
+
+
+                                if (inputDataIndex == sortingIndexOne[0]){
+                                    baseOne = new int[baseTemp.length-(sortingIndexOne[inputDataIndex]-sortingIndexOne[inputDataIndex-1])];
+                                    System.arraycopy(baseTemp, 0, baseOne, 0, baseOne.length);
+                                    sortingIndexOne[0] = sortingIndexOne[0]-1;
+                                    int[] sortingIndexOneTemp = new int[sortingIndexOne.length-1];
+                                    System.arraycopy(sortingIndexOne, 0, sortingIndexOneTemp, 0, sortingIndexOneTemp.length);
+                                    sortingIndexOne = new int[sortingIndexOneTemp.length];
+                                    System.arraycopy(sortingIndexOneTemp, 0, sortingIndexOne, 0, sortingIndexOne.length);
+                                }else {
+                                    int dfg = (sortingIndexOne[sortingIndexOne.length-1]-sortingIndexOne[inputDataIndex]);
+                                    if (inputDataIndex-1 == 0){
+                                        System.arraycopy(baseOne, sortingIndexOne[inputDataIndex], baseTemp, 1, dfg);
+                                        baseOne = new int[baseTemp.length-(sortingIndexOne[inputDataIndex]-1)];
+
+                                    }else {
+
+                                        System.arraycopy(baseOne, sortingIndexOne[inputDataIndex], baseTemp, sortingIndexOne[inputDataIndex-1], dfg);
+                                        baseOne = new int[baseTemp.length-(sortingIndexOne[inputDataIndex]-sortingIndexOne[inputDataIndex-1])];
+                                    }
+
+                                    System.arraycopy(baseTemp, 0, baseOne, 0, baseOne.length);
+                                    sortingIndexOne[0] = sortingIndexOne[0]-1;
+                                    int[] sortingIndexOneTemp = new int[sortingIndexOne.length+1];
+                                    System.arraycopy(sortingIndexOne, 0, sortingIndexOneTemp, 0, sortingIndexOne.length);
+                                    System.out.println(Arrays.toString(sortingIndexOneTemp));
+                                    if (inputDataIndex-1 == 0) {
+                                        dfg = sortingIndexOneTemp[inputDataIndex] - 1;
+                                    }else{
+                                        dfg = sortingIndexOneTemp[inputDataIndex] - sortingIndexOneTemp[inputDataIndex - 1];
+                                    }
+                                    System.out.println(dfg);
+                                    for (int index = inputDataIndex;index<sortingIndexOneTemp.length-2;index++ ){
+
+                                        sortingIndexOneTemp[index] = sortingIndexOneTemp[index+1] - dfg;
+                                    }
+                                    sortingIndexOne = new int[sortingIndexOneTemp.length-2];
+                                    System.arraycopy(sortingIndexOneTemp, 0, sortingIndexOne, 0, sortingIndexOne.length);
+                                }
+                                flag &= ~ (1 << 2); //сбросить флаг
+                                processingMethodOneCommand();
+
+                            }else{
+                                System.out.println("вы ошиблись такого номера книги нет");
+                            }
+                        }
+
+                    }
+
+                }
+            }
+        }
+
+    }
+
+
     private  static void processingMethodFourCommand (){
 
         if ((flag & (1 << 5)) == 0){
