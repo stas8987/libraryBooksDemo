@@ -1,137 +1,350 @@
-
 import java.util.Arrays;
+
 public class LibraryBooks {
+    private static int flag = 0;
+    private static int[] readDataConsole = {0};
+    private static int[] baseOne = {10};
+    private static int[] sortingIndexOne = {0};
 
-    //   public static void main(String[] args) throws IOException {
     public static void main(String[] args) {
-        int[] b_1 = new int[0]; //books listing name
-        int[] sortingBase = new int[0];
-        boolean ex_prog = true;
-        byte [] exit_program = {69, 120, 105, 116, 32, 112, 114, 111, 103, 114, 97, 109, 10, 10};
-        byte [] add_title = {65, 100, 100, 32, 116, 105, 116, 108, 101, 10};
-        byte [] error_comand = {69, 114, 114, 111, 114, 32, 99, 111, 109, 109, 97, 110, 100, 10};
-        byte [] book_name_written = {98, 111, 111, 107, 32, 110, 97, 109, 101, 32, 119, 114, 105, 116, 116, 101, 110, 10, 10};
-        byte [] book_name_not_entered = {98, 111, 111, 107, 32, 110, 97, 109, 101, 32, 110, 111, 116, 32, 101, 110, 116, 101, 114, 101, 100, 10, 10};
-        byte [] enter_the_symbol_1_to_exit= {101, 110, 116, 101, 114, 32, 116, 104, 101, 32, 115, 121, 109, 98, 111, 108, 32, 40, 49, 41, 32, 116, 111, 32, 101, 120, 105, 116, 10, 10};
-        while (ex_prog){
+        do{
+            //вывести основное меню
             showMenu ();
+            //запросить входные данные
+            readConsole ();
+            //проверить входные данные на наличие инородных примесей.
+            checkCharOrNumber (); //если вернет flag 0 то число, если вернет flag 1 то символы
+            //проверить входные данные на наличие командного числа
+            if ((flag & (1 << 1)) == 0){
+                //проверить количество цифр в масиве если больше одной то это неверная команда
+                if (readDataConsole.length == 2){
+                    //обработка команд
+                    switch (readDataConsole[0]){
+                        case  49:  //1
+                            flag &= ~ (1 << 2); //сбросить флаг
+                            do {
+                                System.out.println("Enter name book");
+                                System.out.println("or number (0) to enter the menu");
+                                processingMethodOneCommand();
+                            }while((flag & (1 << 2)) == 0); //
+                            break;
 
-            int comand = read_comand();
-            int flag = 0;
-            switch (comand){
+                        case  50: //2
+                            flag &= ~ (1 << 3); //сбросить флаг
+                            do {
+                                System.out.println("Delete book name");
+                                processingMethodTwoCommand ();
+                            }while((flag & (1 << 3)) == 0); //
+                            break;
 
-                case 49:   //1
-                    int out_case49 = 0;
-                    int out_case49_no_write = 0;
-                    int[] name_books;
-                    //console "Add title"
-                    do{
-                        System.out.write(add_title, 0, add_title.length);
-                        System.out.write(enter_the_symbol_1_to_exit, 0, enter_the_symbol_1_to_exit.length);
+                        case  51:  //3
+                            // processingMethodThreeCommand ();
+                            break;
 
-                        //re-creating the array, storing the new book name into an array
-                        name_books = read_name_books();
+                        case  52:  //4
+                            flag &= ~ (1 << 5); //сбросить флаг
+                            do {
+                                System.out.println("display the title of books");
+                                processingMethodFourCommand ();
+                            }while ((flag & (1 << 5)) == 0);
+                            break;
 
-                        if (name_books.length == 1) {
-                            System.out.write(book_name_not_entered, 0, book_name_not_entered.length);
-                            out_case49 = 1;
-                        } else {
-                            out_case49 = 0;
-                            if (name_books[0] == 49 & name_books[1] == 10){
-                                out_case49_no_write = 1;
-                            }else{
-                                if ((48 <= name_books[0]) & (name_books[0] <= 57)){
-                                    System.out.println("Book cannot start with a number");
-                                    out_case49 = 1;
-                                }
+                        case  53:  //5
+                            //  processingMethodFiveCommand ();
+                            break;
 
-                            }
-                            out_case49 = chekSimbol(name_books[0] , name_books [1]);
-                        }
-                    }while (out_case49 != 0 );
-                    if (out_case49_no_write == 0) {
-                        int[] b_2 = new int[b_1.length + name_books.length];
-                        System.arraycopy(name_books, 0, b_2, b_1.length, name_books.length);
-                        System.arraycopy(b_1, 0, b_2, 0, b_1.length);
-                        b_1 = new int[b_2.length];
-                        System.arraycopy(b_2, 0, b_1, 0, b_2.length);
-                        System.out.write(book_name_written, 0, book_name_written.length);
+                        case  54:  //6
+                            //  processingMethodSixCommand ();
+                            break;
+
+                        case  55:  //7
+                            flag |= (1 << 0);  //установить флаг выхода
+                            System.out.println("Exit program");
+                            break;
+
+                        default: //error comand
+                            System.out.println("Error command");
+                            break;
                     }
-                    break;
-                case 50:   //2
-                    flag = 1;
-                    sortingBase = new int[b_1.length];
-                case 51:   //3
-                    if (flag == 0){
-                        flag = 2;
-                    }
 
-                case 52:   //4
-                    int fileNumberLow = 0;
-                    int fileNumberHigh = 0;
-                    int countBooks = 0;
-                    for (int ee = 0; ee < b_1.length; ee++) {
-                        if (b_1[ee] == 10){
-                            if (countBooks != 0){
-                                fileNumberLow = fileNumberHigh;
-                            }
-                            countBooks++;
-                            fileNumberHigh = ee+1;
-                            System.out.print(countBooks + ". ");
-                            if (flag == 1){
-                                sortingBase[countBooks] = fileNumberHigh;
-                            }
+                } else{
+                    System.out.println("Error command");
+                }
+            }else {
+                System.out.println("Error command");
+            }
 
+        }while ((flag & (1 << 0))==0);
+    }
 
+    public  static void processingMethodOneCommand(){
+        //запросить входные данные
+        readConsole();
+        //проверить входные данные на наличие инородных примесей.
+        checkCharOrNumber(); //если вернет flag 0 то число, если вернет flag 1 то символы
+        //проверить входные данные на наличие командного числа
+        if ((flag & (1 << 1)) == 0) {
+            //проверить количество цифр в масиве если больше одной то это неверная команда
+            if (readDataConsole.length == 2) {
+                if (readDataConsole[0] == 48){
+                    flag |= (1 << 2);  //установить флаг выхода из обработчика первой команды
+                }
+            }
+        }
 
-                            for (int read_file_name = fileNumberLow; read_file_name<fileNumberHigh; read_file_name++ ){
-                                System.out.write(b_1[read_file_name]);
-                            }
-
-                        }
-
-                    }
-                    System.out.println("found (" + countBooks + ") book entries");
-                    if (flag == 1){
-                        System.out.println("enter the number to delete");
-                        int comand_delite_data = read_comand();
-                        if ((48 <= comand_delite_data) & (comand_delite_data <= 57)){
-                            for (int dat = sortingBase[comand_delite_data-49]; dat < sortingBase[comand_delite_data-48]; dat++){
-                                b_1[dat]=0;
-                            }
-                        }
-
-                        System.out.println(Arrays.toString(sortingBase));
+        if ((flag & (1 << 2)) == 0){
+            //проверить введеное значение в консоле на правельность символов
+            //начало имени должно быть заглавными буквами и не должны быть цифрами и спец символы.
+            cheсkSimbol();
+            if ((flag & (1 << 8)) == 0) {
+                System.out.println("ok");
+                // проверить на присутствие в базе
+                checkBaseBooks ();
+                if ((flag & (1 << 9)) == 0){
+                    // добавление записи книги
+                    writeDatabase ();
+                    System.out.println("book added successfully");
+                }else {
+                    System.out.println("such a book already exists");
+                }
 
 
-                    }
-                    if (flag == 2){
-                        System.out.println("enter the number to edit");
-                        // sortingBase = new int[b_1.length];
 
-
-                    }
-                    break;
-                case 53:   //5
-                    break;
-                case 54:   //6
-                    break;
-                case 55:   //7
-                    System.out.write(exit_program,0,exit_program.length);
-                    ex_prog = false;
-                    break;
-                default:
-                    System.out.write(error_comand,0,error_comand.length);
-                    break;
+            }else {
+                System.out.println("be careful");
             }
         }
     }
+    private  static void writeDatabase (){
+        //создаем временное хранилище
+        int[] baseTemp = new int[baseOne.length + readDataConsole.length];
+        //копируем в него полученные с консоли данные
+        System.arraycopy(readDataConsole, 0, baseTemp, baseOne.length, readDataConsole.length);
+        //копируем в него старые данные из основного хранилища
+        System.arraycopy(baseOne, 0, baseTemp, 0, baseOne.length);
+        //пересоздаем основное хранилище равным размеру временного хранилища
+        baseOne = new int[baseTemp.length];
+        //копируем в новопересозданое хранилище данные из временного
+        System.arraycopy(baseTemp, 0, baseOne, 0, baseTemp.length);
 
-    private static int[] read_name_books() {
+        //создаем запись в сортировочном хранилище
+        int[] sortingIndexOneTemp = new int[sortingIndexOne.length + 1];
+        System.arraycopy(sortingIndexOne, 0, sortingIndexOneTemp, 0, sortingIndexOne.length);
+       // sortingIndexOneTemp[sortingIndexOne.length] = 0;
+        sortingIndexOneTemp[sortingIndexOne.length] = baseTemp.length;
+        //увеличиваем количество книг
+        sortingIndexOneTemp[0] = sortingIndexOneTemp[0] + 1;
+        sortingIndexOne = new int[sortingIndexOneTemp.length];
+        System.arraycopy(sortingIndexOneTemp, 0, sortingIndexOne, 0, sortingIndexOneTemp.length);
+
+        System.out.println(Arrays.toString(sortingIndexOne));
+        System.out.println(Arrays.toString(baseOne));
+
+    }
+
+    private  static void processingMethodTwoCommand (){
+        if ((flag & (1 << 3)) == 0) {
+            if (sortingIndexOne[0] == 0){
+                System.out.println("there are no books in the database");
+                System.out.println("or number (0) to enter the menu");
+                //запросить входные данные
+                readConsole();
+                //проверить входные данные на наличие инородных примесей.
+                checkCharOrNumber(); //если вернет flag 0 то число, если вернет flag 1 то символы
+                //проверить входные данные на наличие командного числа
+                if ((flag & (1 << 1)) == 0) {
+                    //проверить количество цифр в масиве если больше одной то это неверная команда
+                    if (readDataConsole.length == 2) {
+                        if (readDataConsole[0] == 48){
+                            flag |= (1 << 3);  //установить флаг выхода из обработчика первой команды
+                        }
+                    }
+                }
+            }else{
+                for (int sIO = 1; sIO <= sortingIndexOne[0];sIO++) {
+                    if (sIO == 1) {
+                        System.out.write(sIO + 48);
+                        System.out.write(46);
+                        System.out.write(32);
+                        for (int readName = 1; readName < sortingIndexOne[sIO]; readName++) {
+                            System.out.write(baseOne[readName]);
+                        }
+
+                    } else {
+                        System.out.write(sIO + 48);
+                        System.out.write(46);
+                        System.out.write(32);
+                        for (int readName = sortingIndexOne[sIO - 1]; readName < sortingIndexOne[sIO]; readName++) {
+                            System.out.write(baseOne[readName]);
+                        }
+                    }
+                }
+                System.out.println("in the database of ("+ sortingIndexOne[0] + ") books");
+                System.out.println("or number (0) to enter the menu");
+                //запросить входные данные
+                readConsole();
+                //проверить входные данные на наличие инородных примесей.
+                checkCharOrNumber(); //если вернет flag 0 то число, если вернет flag 1 то символы
+                //проверить входные данные на наличие командного числа
+                if ((flag & (1 << 1)) == 0) {
+                    if ((2 <= readDataConsole.length) & (readDataConsole.length <= 11)) {
+                        if ((readDataConsole[0] == 48) & (readDataConsole.length == 2)){
+                            flag |= (1 << 3);  //установить флаг выхода из обработчика первой команды
+                        }else {
+                            int inputDataIndex = 0;
+                            int mulIndex = 0;
+                            for (int index = readDataConsole.length-2; index>=0; index--){
+                                if ((mulIndex = mulIndex * 10) == 0){
+                                    mulIndex = 1;
+                                }
+                                inputDataIndex = inputDataIndex + ((readDataConsole[index]-48)*mulIndex);
+                            }
+                            //проверяем есть ли такой номер книги
+                            if (sortingIndexOne[0] >= inputDataIndex){
+                               // создаем резервный массив
+                                int [] baseTemp = new int[baseOne.length];
+                                //затем копируем в этот массив все данные до
+                                // полученного числа -1
+                                System.arraycopy(baseOne, 0, baseTemp, 0, sortingIndexOne[inputDataIndex-1]);
+
+
+                                if (inputDataIndex == sortingIndexOne[0]){
+                                    baseOne = new int[baseTemp.length-(sortingIndexOne[inputDataIndex]-sortingIndexOne[inputDataIndex-1])];
+                                    System.arraycopy(baseTemp, 0, baseOne, 0, baseOne.length);
+                                    sortingIndexOne[0] = sortingIndexOne[0]-1;
+                                    int[] sortingIndexOneTemp = new int[sortingIndexOne.length-1];
+                                    System.arraycopy(sortingIndexOne, 0, sortingIndexOneTemp, 0, sortingIndexOneTemp.length);
+                                    sortingIndexOne = new int[sortingIndexOneTemp.length];
+                                    System.arraycopy(sortingIndexOneTemp, 0, sortingIndexOne, 0, sortingIndexOne.length);
+                                }else {
+                                    int dfg = (sortingIndexOne[sortingIndexOne.length-1]-sortingIndexOne[inputDataIndex]);
+                                    if (inputDataIndex-1 == 0){
+                                        System.arraycopy(baseOne, sortingIndexOne[inputDataIndex], baseTemp, 1, dfg);
+                                        baseOne = new int[baseTemp.length-(sortingIndexOne[inputDataIndex]-1)];
+
+                                    }else {
+
+                                        System.arraycopy(baseOne, sortingIndexOne[inputDataIndex], baseTemp, sortingIndexOne[inputDataIndex-1], dfg);
+                                        baseOne = new int[baseTemp.length-(sortingIndexOne[inputDataIndex]-sortingIndexOne[inputDataIndex-1])];
+                                    }
+
+                                    System.arraycopy(baseTemp, 0, baseOne, 0, baseOne.length);
+                                    sortingIndexOne[0] = sortingIndexOne[0]-1;
+                                    int[] sortingIndexOneTemp = new int[sortingIndexOne.length+1];
+                                    System.arraycopy(sortingIndexOne, 0, sortingIndexOneTemp, 0, sortingIndexOne.length);
+                                    System.out.println(Arrays.toString(sortingIndexOneTemp));
+                                    if (inputDataIndex-1 == 0) {
+                                        dfg = sortingIndexOneTemp[inputDataIndex] - 1;
+                                    }else{
+                                        dfg = sortingIndexOneTemp[inputDataIndex] - sortingIndexOneTemp[inputDataIndex - 1];
+                                    }
+                                    System.out.println(dfg);
+                                    for (int index = inputDataIndex;index<sortingIndexOneTemp.length-2;index++ ){
+
+                                        sortingIndexOneTemp[index] = sortingIndexOneTemp[index+1] - dfg;
+                                    }
+                                    sortingIndexOne = new int[sortingIndexOneTemp.length-2];
+                                    System.arraycopy(sortingIndexOneTemp, 0, sortingIndexOne, 0, sortingIndexOne.length);
+                                }
+
+                                System.out.println(Arrays.toString(sortingIndexOne));
+
+                                System.out.println(Arrays.toString(baseOne));
+
+                            }else{
+                                System.out.println("вы ошиблись такого номера книги нет");
+                            }
+                        }
+
+                    }
+
+                }
+            }
+        }
+
+    }
+    private  static void processingMethodFourCommand (){
+
+        if ((flag & (1 << 5)) == 0){
+            if (sortingIndexOne[0] == 0){
+                System.out.println("there are no books in the database");
+            }else{
+                System.out.println("in the database of ("+ sortingIndexOne[0] + ") books");
+                for (int sIO = 1; sIO <= sortingIndexOne[0];sIO++){
+                    if (sIO == 1) {
+                        System.out.write(sIO+48);
+                        System.out.write(46);
+                        System.out.write(32);
+                        for (int readName = 1; readName < sortingIndexOne[sIO];readName++){
+                            System.out.write(baseOne[readName]);
+                        }
+
+                    }else{
+                        System.out.write(sIO+48);
+                        System.out.write(46);
+                        System.out.write(32);
+                        for (int readName = sortingIndexOne[sIO - 1]; readName < sortingIndexOne[sIO];readName++) {
+                            System.out.write(baseOne[readName]);
+                        }
+                    }
+                }
+            }
+        }
+        System.out.println("or number (0) to enter the menu");
+        //запросить входные данные
+        readConsole();
+        //проверить входные данные на наличие инородных примесей.
+        checkCharOrNumber(); //если вернет flag 0 то число, если вернет flag 1 то символы
+        //проверить входные данные на наличие командного числа
+        if ((flag & (1 << 1)) == 0) {
+            //проверить количество цифр в масиве если больше одной то это неверная команда
+            if (readDataConsole.length == 2) {
+                if (readDataConsole[0] == 48){
+                    flag |= (1 << 5);  //установить флаг выхода из обработчика первой команды
+                }
+            }
+        }
+
+    }
+
+
+
+    private  static void checkBaseBooks (){
+
+    }
+    private  static void checkCharOrNumber (){
+        boolean triger = true;
+        for (int count = 0; count<readDataConsole.length-1; count++){
+            if (triger) {
+                if (readDataConsole[count] == 48) {
+                    if (readDataConsole[count+1] == 10){
+                        flag &= ~ (1 << 1); //сбросить флаг
+                        break;
+                    }else {
+                        flag |= (1 << 1);  //установить флаг
+                        break;
+                    }
+                }
+            }
+            if ((48 <= readDataConsole[0]) & (readDataConsole[0] <= 57)){
+                triger = false;
+                flag &= ~ (1 << 1); //сбросить флаг
+            }
+            else {
+                flag |= (1 << 1);  //установить флаг
+                break;
+            }
+
+        }
+
+    }
+
+    private  static void readConsole (){
         byte [] letterWrite = {60, 58};
-        int [] x_data = new int[100];
+        int [] inputData = new int[100];
         int a = 0;
         boolean exit_name_books = true;
+
         System.out.write(letterWrite, 0, letterWrite.length);
         while (exit_name_books) {
             try {
@@ -141,42 +354,37 @@ public class LibraryBooks {
                     letter = System.in.read();
                 }
                 if (letter == 10) {
-                    x_data[a++] = 10;
-                    x_data[a] = 10;
+                    inputData[a++] = 10;
+                    inputData[a] = 10;
                     exit_name_books = false;
                 }
                 else {
                     if (a < 98) {
-                        x_data[a] = letter;
+                        inputData[a] = letter;
                         a++;
                     }
                     else {
-                        x_data[0] = 0;
+                        inputData[0] = 0;
                     }
                 }
 
-
-
             } catch (java.io.IOException e) {
                 a = 0;
-                x_data[a] = 0;
+                inputData[a] = 0;
                 exit_name_books = false;
             }
-
         }
-        int[] name_books = new int[a];
-        System.arraycopy (x_data, 0, name_books, 0, a);
-        return name_books;
-
+        readDataConsole = new int[a];
+        System.arraycopy (inputData, 0, readDataConsole, 0, a);
     }
 
-    private static void showMenu ()
-    {
-        //       byte [] color_red = {27, 91, 51, 49, 109};
-        //       byte [] color_gren = {27, 91, 51, 50, 109};
-        //       byte [] color_black = {27, 91, 48, 109, 32};
 
-        byte matrix_menu[][] = {
+    private static void showMenu (){
+        //       byte [] colorRed = {27, 91, 51, 49, 109};
+        //       byte [] colorGreen = {27, 91, 51, 50, 109};
+        //       byte [] colorBlack = {27, 91, 48, 109, 32};
+
+        byte matrixArrayMenu[][] = {
                 //************Menu************
                 { 31, 2, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 77, 101, 110, 117, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 10 },
                 //Enter the number (1-7)
@@ -200,94 +408,88 @@ public class LibraryBooks {
         };
         for (int x = 0; x<10; x++ ){
             int c = 0;
-            //          if (matrix_menu[x][1] == 1){
+            //          if (matrixArrayMenu[x][1] == 1){
             //              for (c = 0; c<5; c++ ) {
-            //                  System.out.write(color_red[c]);
+            //                  System.out.write(colorRed[c]);
             //             }
             //         }
-            //          if (matrix_menu[x][1] == 2){
+            //          if (matrixArrayMenu[x][1] == 2){
             //              for (c = 0; c<5; c++ ) {
-            //                  System.out.write(color_gren[c]);
+            //                  System.out.write(colorGreen[c]);
             //              }
             //         }
-            if (matrix_menu[x][1] == 3){
+            if (matrixArrayMenu[x][1] == 3){
 
                 //              for (c = 0; c<5; c++ ) {
-                //                  System.out.write(color_red[c]);
+                //                  System.out.write(colorRed[c]);
                 //              }
                 System.out.print((x-1) + ".");
 
                 //              for (c = 0; c<5; c++ ) {
-                //                  System.out.write(color_black[c]);
+                //                  System.out.write(colorBlack[c]);
                 //              }
             }
-            for(int y = 2; y<matrix_menu[x][0]; y++){
-                System.out.write(matrix_menu[x][y]);
+            for(int y = 2; y<matrixArrayMenu[x][0]; y++){
+                System.out.write(matrixArrayMenu[x][y]);
             }
         }
-    }
-    private static int read_comand(){
-        byte [] letterWrite = {60, 58};
-        int a = 0;
-        int b = -1;
-        boolean exit_comand = true;
-        System.out.write(letterWrite, 0, letterWrite.length);
-        while (exit_comand) {
-            try {
-                int letter = System.in.read();
 
-                if (letter == 13){
-                    //  System.out.print(letter +", ");
-                    letter = System.in.read();
-                }
-                // System.out.print(letter+", ");
-                if (letter == 10){
-                    if (a < 2) {
-                        exit_comand = false;
-                    }
-                    else {
-                        b = -1;
-                        exit_comand = false;
-                    }
-                } else {
-                    a++;
-                    b = letter;
-                    exit_comand = true;
-                }
-            } catch (java.io.IOException e) {
-                b = -1; //error
+    }
+    private static void cheсkSimbol(){
+
+        flag &= ~ (1 << 8); //сбросить флаг
+        if (readDataConsole.length > 1) {     //проверяем длину считанного слова отлавливаем пустую строку
+            int simbol1 = readDataConsole[0];
+            int simbol2 = readDataConsole[1];
+
+            if ((97 <= simbol1) & (simbol1 <= 122)) {
+                System.out.println("The first letter must be capital");
+                flag |= (1 << 8);  //установить флаг некоректности символа;
             }
-        }
-        return b;
-    }
-    private static int chekSimbol(int simbol1, int simbol2){
-        if ((97 <= simbol1) & (simbol1 <= 122)) {
-            System.out.println("The first letter must be capital");
-            return 1;
-        }
 
-        if ((160 <= simbol1) & (simbol1 <= 175)) {
-            System.out.println("Rus The first letter must be capital");
-            return 1;
-        }
-        if ((224 <= simbol1) & (simbol1 <= 241)) {
-            System.out.println("Rus The first letter must be capital");
-            return 1;
-        }
-        if (simbol1 == 208) {
-            if ((176 <= simbol2) & (simbol2 <= 191)) {
+            if ((160 <= simbol1) & (simbol1 <= 175)) {
                 System.out.println("Rus The first letter must be capital");
-                return 1;
+                flag |= (1 << 8);  //установить флаг некоректности символа;
             }
-        }
-        if (simbol1 == 209) {
-            if ((128 <= simbol2) & (simbol2 <= 145)) {
+            if ((224 <= simbol1) & (simbol1 <= 241)) {
                 System.out.println("Rus The first letter must be capital");
-                return  1;
+                flag |= (1 << 8);  //установить флаг некоректности символа;
             }
+            if (simbol1 == 208) {
+                if ((176 <= simbol2) & (simbol2 <= 191)) {
+                    System.out.println("Rus The first letter must be capital");
+                    flag |= (1 << 8);  //установить флаг некоректности символа;
+                }
+            }
+            if (simbol1 == 209) {
+                if ((128 <= simbol2) & (simbol2 <= 145)) {
+                    System.out.println("Rus The first letter must be capital");
+                    flag |= (1 << 8);  //установить флаг некоректности символа;
+                }
+            }
+            if ((48 <= simbol1) & (simbol1 <= 57)) {
+                System.out.println("numbers at the beginning of the name cannot be used");
+                flag |= (1 << 8);  //установить флаг некоректности символа;
+            }
+            if ((91 <= simbol1) & (simbol1 <= 96)) {
+                System.out.println("special characters cannot be used");
+                flag |= (1 << 8);  //установить флаг некоректности символа; спец символы
+            }
+            if ((58 <= simbol1) & (simbol1 <= 64)) {
+                System.out.println("special characters cannot be used");
+                flag |= (1 << 8);  //установить флаг некоректности символа; спец символы
+            }
+            if ((123 <= simbol1) & (simbol1 <= 126)) {
+                System.out.println("special characters cannot be used");
+                flag |= (1 << 8);  //установить флаг некоректности символа; спец символы
+            }
+            if ((32 <= simbol1) & (simbol1 <= 47)) {
+                System.out.println("special characters cannot be used");
+                flag |= (1 << 8);  //установить флаг некоректности символа; спец символы
+            }
+
+        }else {
+            flag |= (1 << 8);  //установить флаг некоректности символа;
         }
-        return 0;
     }
-
-
 }
